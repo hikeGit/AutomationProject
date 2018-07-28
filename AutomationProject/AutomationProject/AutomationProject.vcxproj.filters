@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="NoUse">
+      <UniqueIdentifier>{d1391399-f177-4bf2-8e11-2dd684e930a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NoUse\资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="NoUse\源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="NoUse\头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="DB">
+      <UniqueIdentifier>{038db986-59a6-4c29-8531-9983d308141e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Access">
+      <UniqueIdentifier>{45648951-3cac-418b-9486-f6bd9753554e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Access\源文件">
+      <UniqueIdentifier>{88507e7d-7fee-491e-91f7-2677f28f165d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Access\头文件">
+      <UniqueIdentifier>{aec64c89-d806-49e4-9ca0-0513b589bf80}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>NoUse\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>NoUse\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Access\AccessData.h">
+      <Filter>DB\Access\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Access\AdoCommand.h">
+      <Filter>DB\Access\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Access\AdoConnect.h">
+      <Filter>DB\Access\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Access\AdoRecordSet.h">
+      <Filter>DB\Access\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Access\DataStruct.h">
+      <Filter>DB\Access\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ExternLib.h">
+      <Filter>DB\Access\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Access\AdoDataInterface.h">
+      <Filter>DB\Access\头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>NoUse\源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\Access\AccessData.cpp">
+      <Filter>DB\Access\源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\Access\AdoCommand.cpp">
+      <Filter>DB\Access\源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\Access\AdoConnect.cpp">
+      <Filter>DB\Access\源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\Access\AdoRecordSet.cpp">
+      <Filter>DB\Access\源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="AutomationProject.cpp" />
+    <ClCompile Include="DB\Access\AdoDataInterface.cpp">
+      <Filter>DB\Access\源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt">
+      <Filter>NoUse</Filter>
+    </Text>
+  </ItemGroup>
+</Project>
