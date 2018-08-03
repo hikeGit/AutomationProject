@@ -1,9 +1,9 @@
-﻿// Created by Microsoft (R) C/C++ Compiler Version 14.00.23026.0 (9db729d4).
+﻿// Created by Microsoft (R) C/C++ Compiler Version 14.00.23026.0 (3ec172ac).
 //
-// e:\practise\automationproject\automationproject\debug\msado15.tlh
+// f:\practise\automationprojectrepo\automationproject\automationproject\debug\msado15.tlh
 //
 // C++ source equivalent of type library C:\Program Files\Common Files\System\ado\msado15.dll
-// compiler-generated file created 07/20/18 at 23:35:57 - DO NOT EDIT!
+// compiler-generated file created 08/02/18 at 17:39:55 - DO NOT EDIT!
 
 #pragma once
 #pragma pack(push, 8)
@@ -143,7 +143,7 @@ struct __declspec(uuid("00000517-0000-0010-8000-00aa006d2ea4"))
 /* interface */ ADOCommandConstruction;
 struct /* coclass */ Command;
 struct /* coclass */ Recordset;
-struct __declspec(uuid("00001283-0000-0010-8000-00aa006d2ea4"))
+struct __declspec(uuid("00000283-0000-0010-8000-00aa006d2ea4"))
 /* interface */ ADORecordsetConstruction;
 struct __declspec(uuid("00001505-0000-0010-8000-00aa006d2ea4"))
 /* dual interface */ Field15;
@@ -192,8 +192,6 @@ struct __declspec(uuid("00000562-0000-0010-8000-00aa006d2ea4"))
 /* dual interface */ _Record_Deprecated;
 struct __declspec(uuid("00000565-0000-0010-8000-00aa006d2ea4"))
 /* dual interface */ _Stream_Deprecated;
-struct __declspec(uuid("00000283-0000-0010-8000-00aa006d2ea4"))
-/* interface */ ADORecordsetConstruction_Deprecated;
 struct __declspec(uuid("00000505-0000-0010-8000-00aa006d2ea4"))
 /* dual interface */ Field15_Deprecated;
 typedef __int64 PositionEnum_Param;
@@ -238,7 +236,6 @@ _COM_SMARTPTR_TYPEDEF(Parameters_Deprecated, __uuidof(Parameters_Deprecated));
 _COM_SMARTPTR_TYPEDEF(ConnectionEvents_Deprecated, __uuidof(ConnectionEvents_Deprecated));
 _COM_SMARTPTR_TYPEDEF(RecordsetEvents_Deprecated, __uuidof(RecordsetEvents_Deprecated));
 _COM_SMARTPTR_TYPEDEF(_Stream_Deprecated, __uuidof(_Stream_Deprecated));
-_COM_SMARTPTR_TYPEDEF(ADORecordsetConstruction_Deprecated, __uuidof(ADORecordsetConstruction_Deprecated));
 _COM_SMARTPTR_TYPEDEF(Field15_Deprecated, __uuidof(Field15_Deprecated));
 _COM_SMARTPTR_TYPEDEF(Command15, __uuidof(Command15));
 _COM_SMARTPTR_TYPEDEF(Command25, __uuidof(Command25));
@@ -1930,7 +1927,7 @@ Recordset;
     // [ default ] interface _Recordset
     // [ default, source ] dispinterface RecordsetEvents
 
-struct __declspec(uuid("00001283-0000-0010-8000-00aa006d2ea4"))
+struct __declspec(uuid("00000283-0000-0010-8000-00aa006d2ea4"))
 ADORecordsetConstruction : IDispatch
 {
     //
@@ -1940,7 +1937,7 @@ ADORecordsetConstruction : IDispatch
     __declspec(property(get=GetRowset,put=PutRowset))
     IUnknownPtr Rowset;
     __declspec(property(get=GetChapter,put=PutChapter))
-    long Chapter;
+    ADO_LONGPTR Chapter;
     __declspec(property(get=GetRowPosition,put=PutRowPosition))
     IUnknownPtr RowPosition;
 
@@ -1951,9 +1948,9 @@ ADORecordsetConstruction : IDispatch
     IUnknownPtr GetRowset ( );
     void PutRowset (
         IUnknown * ppRowset );
-    long GetChapter ( );
+    ADO_LONGPTR GetChapter ( );
     void PutChapter (
-        long plChapter );
+        ADO_LONGPTR plChapter );
     IUnknownPtr GetRowPosition ( );
     void PutRowPosition (
         IUnknown * ppRowPos );
@@ -1967,9 +1964,9 @@ ADORecordsetConstruction : IDispatch
       virtual HRESULT __stdcall put_Rowset (
         /*[in]*/ IUnknown * ppRowset ) = 0;
       virtual HRESULT __stdcall get_Chapter (
-        /*[out,retval]*/ long * plChapter ) = 0;
+        /*[out,retval]*/ ADO_LONGPTR * plChapter ) = 0;
       virtual HRESULT __stdcall put_Chapter (
-        /*[in]*/ long plChapter ) = 0;
+        /*[in]*/ ADO_LONGPTR plChapter ) = 0;
       virtual HRESULT __stdcall get_RowPosition (
         /*[out,retval]*/ IUnknown * * ppRowPos ) = 0;
       virtual HRESULT __stdcall put_RowPosition (
@@ -2661,52 +2658,6 @@ _Stream_Deprecated : IDispatch
         /*[in]*/ BSTR Data,
         /*[in]*/ enum StreamWriteEnum Options ) = 0;
       virtual HRESULT __stdcall raw_Cancel ( ) = 0;
-};
-
-struct __declspec(uuid("00000283-0000-0010-8000-00aa006d2ea4"))
-ADORecordsetConstruction_Deprecated : IDispatch
-{
-    //
-    // Property data
-    //
-
-    __declspec(property(get=GetRowset,put=PutRowset))
-    IUnknownPtr Rowset;
-    __declspec(property(get=GetChapter,put=PutChapter))
-    ADO_LONGPTR Chapter;
-    __declspec(property(get=GetRowPosition,put=PutRowPosition))
-    IUnknownPtr RowPosition;
-
-    //
-    // Wrapper methods for error-handling
-    //
-
-    IUnknownPtr GetRowset ( );
-    void PutRowset (
-        IUnknown * ppRowset );
-    ADO_LONGPTR GetChapter ( );
-    void PutChapter (
-        ADO_LONGPTR plChapter );
-    IUnknownPtr GetRowPosition ( );
-    void PutRowPosition (
-        IUnknown * ppRowPos );
-
-    //
-    // Raw methods provided by interface
-    //
-
-      virtual HRESULT __stdcall get_Rowset (
-        /*[out,retval]*/ IUnknown * * ppRowset ) = 0;
-      virtual HRESULT __stdcall put_Rowset (
-        /*[in]*/ IUnknown * ppRowset ) = 0;
-      virtual HRESULT __stdcall get_Chapter (
-        /*[out,retval]*/ ADO_LONGPTR * plChapter ) = 0;
-      virtual HRESULT __stdcall put_Chapter (
-        /*[in]*/ ADO_LONGPTR plChapter ) = 0;
-      virtual HRESULT __stdcall get_RowPosition (
-        /*[out,retval]*/ IUnknown * * ppRowPos ) = 0;
-      virtual HRESULT __stdcall put_RowPosition (
-        /*[in]*/ IUnknown * ppRowPos ) = 0;
 };
 
 struct __declspec(uuid("00000505-0000-0010-8000-00aa006d2ea4"))
@@ -5130,7 +5081,7 @@ extern "C" const GUID __declspec(selectany) CLSID_Command =
 extern "C" const GUID __declspec(selectany) CLSID_Recordset =
     {0x00000535,0x0000,0x0010,{0x80,0x00,0x00,0xaa,0x00,0x6d,0x2e,0xa4}};
 extern "C" const GUID __declspec(selectany) IID_ADORecordsetConstruction =
-    {0x00001283,0x0000,0x0010,{0x80,0x00,0x00,0xaa,0x00,0x6d,0x2e,0xa4}};
+    {0x00000283,0x0000,0x0010,{0x80,0x00,0x00,0xaa,0x00,0x6d,0x2e,0xa4}};
 extern "C" const GUID __declspec(selectany) IID_Field15 =
     {0x00001505,0x0000,0x0010,{0x80,0x00,0x00,0xaa,0x00,0x6d,0x2e,0xa4}};
 extern "C" const GUID __declspec(selectany) CLSID_Parameter =
@@ -5155,8 +5106,6 @@ extern "C" const GUID __declspec(selectany) DIID_RecordsetEvents_Deprecated =
     {0x00000266,0x0000,0x0010,{0x80,0x00,0x00,0xaa,0x00,0x6d,0x2e,0xa4}};
 extern "C" const GUID __declspec(selectany) IID__Stream_Deprecated =
     {0x00000565,0x0000,0x0010,{0x80,0x00,0x00,0xaa,0x00,0x6d,0x2e,0xa4}};
-extern "C" const GUID __declspec(selectany) IID_ADORecordsetConstruction_Deprecated =
-    {0x00000283,0x0000,0x0010,{0x80,0x00,0x00,0xaa,0x00,0x6d,0x2e,0xa4}};
 extern "C" const GUID __declspec(selectany) IID_Field15_Deprecated =
     {0x00000505,0x0000,0x0010,{0x80,0x00,0x00,0xaa,0x00,0x6d,0x2e,0xa4}};
 extern "C" const GUID __declspec(selectany) IID_Command15 =
@@ -5212,7 +5161,7 @@ extern "C" const GUID __declspec(selectany) IID__Record_Deprecated =
 // Wrapper method implementations
 //
 
-#include "e:\practise\automationproject\automationproject\debug\msado15.tli"
+#include "f:\practise\automationprojectrepo\automationproject\automationproject\debug\msado15.tli"
 
 } // namespace ADODB
 

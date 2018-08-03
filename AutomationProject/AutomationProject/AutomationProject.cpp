@@ -21,6 +21,15 @@ unique_ptr<char[]> CStringToCharIndicator(CString strtemp)
 	return pFileName1;
 }
 
+CString GetExeDirectory()
+{
+	TCHAR path[MAX_PATH];
+	GetModuleFileName(NULL, path, MAX_PATH);
+	CString strPath = path;
+	int pos = strPath.ReverseFind('\\');
+	strPath = strPath.Left(pos + 1);
+	return strPath;
+}
 
 int main()
 {
@@ -29,7 +38,8 @@ int main()
 
 	CDataAccess accessData;
 	ACSDData1D vecData;
-	CString strPath = "E:\\Practise\\AutomationProject\\Debug\\826P_MECH.mdb";
+	CString strPath = GetExeDirectory();
+	strPath+= "826P_MECH.mdb";
 	CString strTempFormName;
 	strTempFormName.Format(_T("%dÎ»ÖÃ²ÎÊý"), 0);
 
