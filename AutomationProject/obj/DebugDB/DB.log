@@ -1,0 +1,25 @@
+﻿生成启动时间为 2018/8/6 17:08:06。
+     1>项目“F:\Practise\AutomationProjectRepo\AutomationProject\DB\DB.vcxproj”在节点 3 上(Build 个目标)。
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(367,5): warning MSB8004: Intermediate Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Intermediate Directory.
+     1>ClCompile:
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D _USRDLL /D _WINDLL /D _UNICODE /D UNICODE /D _AFXDLL /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Yu"stdafx.h" /Fp"F:\Practise\AutomationProjectRepo\AutomationProject\\obj\DebugDB\DB.pch" /Fo"F:\Practise\AutomationProjectRepo\AutomationProject\\obj\DebugDB\\" /Fd"F:\Practise\AutomationProjectRepo\AutomationProject\\obj\DebugDB\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt Access\AccessData.cpp Access\AdoCommand.cpp Access\AdoConnect.cpp Access\AdoRecordSet.cpp
+         AdoRecordSet.cpp
+         AdoConnect.cpp
+         AdoCommand.cpp
+         AccessData.cpp
+         正在生成代码...
+       Link:
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"F:\Practise\AutomationProjectRepo\AutomationProject\Debug\DB.dll" /INCREMENTAL /NOLOGO /LIBPATH:F:\Practise\AutomationProjectRepo\AutomationProject\\lib\Debug\ /DEF:".\DB.def" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /manifestinput:"F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\Include\Manifest\dpiaware.manifest" /DEBUG /PDB:"F:\Practise\AutomationProjectRepo\AutomationProject\Debug\\pdb\DB.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:\Practise\AutomationProjectRepo\AutomationProject\\lib\Debug\DB.lib" /MACHINE:X86 /DLL F:\Practise\AutomationProjectRepo\AutomationProject\\obj\DebugDB\DB.res
+         F:\Practise\AutomationProjectRepo\AutomationProject\\obj\DebugDB\AccessData.obj
+         F:\Practise\AutomationProjectRepo\AutomationProject\\obj\DebugDB\AdoCommand.obj
+         F:\Practise\AutomationProjectRepo\AutomationProject\\obj\DebugDB\AdoConnect.obj
+         F:\Practise\AutomationProjectRepo\AutomationProject\\obj\DebugDB\AdoRecordSet.obj
+         F:\Practise\AutomationProjectRepo\AutomationProject\\obj\DebugDB\DB.obj
+         F:\Practise\AutomationProjectRepo\AutomationProject\\obj\DebugDB\stdafx.obj
+           正在创建库 F:\Practise\AutomationProjectRepo\AutomationProject\\lib\Debug\DB.lib 和对象 F:\Practise\AutomationProjectRepo\AutomationProject\\lib\Debug\DB.exp
+         DB.vcxproj -> F:\Practise\AutomationProjectRepo\AutomationProject\Debug\DB.dll
+     1>已完成生成项目“F:\Practise\AutomationProjectRepo\AutomationProject\DB\DB.vcxproj”(Build 个目标)的操作。
+
+已成功生成。
+
+已用时间 00:00:02.25

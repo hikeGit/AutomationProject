@@ -1,0 +1,24 @@
+﻿生成启动时间为 2018/8/6 17:08:23。
+     1>项目“F:\Practise\AutomationProjectRepo\AutomationProject\Motion\Motion\Motion.vcxproj”在节点 2 上(Rebuild 个目标)。
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(367,5): warning MSB8004: Intermediate Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Intermediate Directory.
+     1>ClCompile:
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /sdl /O2 /Oi /Oy- /GL /D WIN32 /D _WINDOWS /D NDEBUG /D _USRDLL /D _WINDLL /D _UNICODE /D UNICODE /D _AFXDLL /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Yc"stdafx.h" /Fp"F:\Practise\AutomationProjectRepo\AutomationProject\\obj\ReleaseMotion\Motion.pch" /Fo"F:\Practise\AutomationProjectRepo\AutomationProject\\obj\ReleaseMotion\\" /Fd"F:\Practise\AutomationProjectRepo\AutomationProject\\obj\ReleaseMotion\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt stdafx.cpp
+         stdafx.cpp
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /sdl /O2 /Oi /Oy- /GL /D WIN32 /D _WINDOWS /D NDEBUG /D _USRDLL /D _WINDLL /D _UNICODE /D UNICODE /D _AFXDLL /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Yu"stdafx.h" /Fp"F:\Practise\AutomationProjectRepo\AutomationProject\\obj\ReleaseMotion\Motion.pch" /Fo"F:\Practise\AutomationProjectRepo\AutomationProject\\obj\ReleaseMotion\\" /Fd"F:\Practise\AutomationProjectRepo\AutomationProject\\obj\ReleaseMotion\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt Motion.cpp
+         Motion.cpp
+       ResourceCompile:
+         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\rc.exe /D NDEBUG /D _UNICODE /D UNICODE /D _AFXDLL /l"0x0804" /IF:\Practise\AutomationProjectRepo\AutomationProject\\obj\ReleaseMotion\ /nologo /fo"F:\Practise\AutomationProjectRepo\AutomationProject\\obj\ReleaseMotion\Motion.res" Motion.rc 
+       Link:
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"F:\Practise\AutomationProjectRepo\AutomationProject\Release\Motion.dll" /INCREMENTAL:NO /NOLOGO /DEF:".\Motion.def" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /manifestinput:"F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\Include\Manifest\dpiaware.manifest" /Debug /PDB:"F:\Practise\AutomationProjectRepo\AutomationProject\Release\\pdbRelease\Motion.pdb" /SUBSYSTEM:WINDOWS /OPT:REF /OPT:ICF /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:\Practise\AutomationProjectRepo\AutomationProject\\lib\Release\Motion.lib" /MACHINE:X86 /SAFESEH /DLL F:\Practise\AutomationProjectRepo\AutomationProject\\obj\ReleaseMotion\Motion.res
+         F:\Practise\AutomationProjectRepo\AutomationProject\\obj\ReleaseMotion\Motion.obj
+         F:\Practise\AutomationProjectRepo\AutomationProject\\obj\ReleaseMotion\stdafx.obj
+         Motion.obj : 找到 MSIL .netmodule 或使用 /GL 编译的模块；正在使用 /LTCG 重新启动链接；将 /LTCG 添加到链接命令行以改进链接器性能
+           正在创建库 F:\Practise\AutomationProjectRepo\AutomationProject\\lib\Release\Motion.lib 和对象 F:\Practise\AutomationProjectRepo\AutomationProject\\lib\Release\Motion.exp
+         正在生成代码
+         已完成代码的生成
+         Motion.vcxproj -> F:\Practise\AutomationProjectRepo\AutomationProject\Release\Motion.dll
+     1>已完成生成项目“F:\Practise\AutomationProjectRepo\AutomationProject\Motion\Motion\Motion.vcxproj”(Rebuild 个目标)的操作。
+
+已成功生成。
+
+已用时间 00:00:02.76

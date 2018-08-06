@@ -1,0 +1,42 @@
+﻿生成启动时间为 2018/8/6 15:50:57。
+     1>项目“F:\Practise\AutomationProjectRepo\AutomationProject\DB\DB.vcxproj”在节点 2 上(Rebuild 个目标)。
+     1>ClCompile:
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /sdl /O2 /Oi /Oy- /GL /D WIN32 /D _WINDOWS /D NDEBUG /D _USRDLL /D _WINDLL /D _UNICODE /D UNICODE /D _AFXDLL /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Yc"stdafx.h" /Fp"Release\DB.pch" /Fo"Release\\" /Fd"Release\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt stdafx.cpp
+         stdafx.cpp
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /sdl /O2 /Oi /Oy- /GL /D WIN32 /D _WINDOWS /D NDEBUG /D _USRDLL /D _WINDLL /D _UNICODE /D UNICODE /D _AFXDLL /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Yu"stdafx.h" /Fp"Release\DB.pch" /Fo"Release\\" /Fd"Release\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt Access\AccessData.cpp Access\AdoCommand.cpp Access\AdoConnect.cpp Access\AdoRecordSet.cpp DB.cpp
+         AccessData.cpp
+         AdoCommand.cpp
+         AdoConnect.cpp
+         AdoRecordSet.cpp
+     1>Access\AdoRecordSet.cpp(279): warning C4101: “e”: 未引用的局部变量
+     1>Access\AdoRecordSet.cpp(331): warning C4101: “e”: 未引用的局部变量
+     1>Access\AdoRecordSet.cpp(913): warning C4101: “e”: 未引用的局部变量
+     1>Access\AdoRecordSet.cpp(930): warning C4101: “e”: 未引用的局部变量
+     1>Access\AdoRecordSet.cpp(946): warning C4101: “e”: 未引用的局部变量
+     1>Access\AdoRecordSet.cpp(973): warning C4101: “e”: 未引用的局部变量
+     1>Access\AdoRecordSet.cpp(988): warning C4101: “e”: 未引用的局部变量
+     1>Access\AdoRecordSet.cpp(1030): warning C4101: “e”: 未引用的局部变量
+     1>Access\AdoRecordSet.cpp(1045): warning C4101: “e”: 未引用的局部变量
+     1>Access\AdoRecordSet.cpp(2235): warning C4101: “e”: 未引用的局部变量
+     1>Access\AdoRecordSet.cpp(2474): warning C4101: “e”: 未引用的局部变量
+         DB.cpp
+       ResourceCompile:
+         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\rc.exe /D NDEBUG /D _UNICODE /D UNICODE /D _AFXDLL /l"0x0804" /IRelease\ /nologo /fo"Release\DB.res" DB.rc 
+       Link:
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"F:\Practise\AutomationProjectRepo\AutomationProject\Release\DB.dll" /INCREMENTAL:NO /NOLOGO /DEF:".\DB.def" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /manifestinput:"F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\Include\Manifest\dpiaware.manifest" /Debug /PDB:"F:\Practise\AutomationProjectRepo\AutomationProject\Release\DB.pdb" /SUBSYSTEM:WINDOWS /OPT:REF /OPT:ICF /LTCG:incremental /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:\Practise\AutomationProjectRepo\AutomationProject\Release\DB.lib" /MACHINE:X86 /SAFESEH /DLL Release\DB.res
+         Release\AccessData.obj
+         Release\AdoCommand.obj
+         Release\AdoConnect.obj
+         Release\AdoRecordSet.obj
+         Release\DB.obj
+         Release\stdafx.obj
+           正在创建库 F:\Practise\AutomationProjectRepo\AutomationProject\Release\DB.lib 和对象 F:\Practise\AutomationProjectRepo\AutomationProject\Release\DB.exp
+         正在生成代码
+         All 186 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+         已完成代码的生成
+         DB.vcxproj -> F:\Practise\AutomationProjectRepo\AutomationProject\Release\DB.dll
+     1>已完成生成项目“F:\Practise\AutomationProjectRepo\AutomationProject\DB\DB.vcxproj”(Rebuild 个目标)的操作。
+
+已成功生成。
+
+已用时间 00:00:03.30

@@ -1,0 +1,43 @@
+﻿生成启动时间为 2018/8/6 17:08:23。
+     1>项目“F:\Practise\AutomationProjectRepo\AutomationProject\DB\DB.vcxproj”在节点 3 上(Rebuild 个目标)。
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(367,5): warning MSB8004: Intermediate Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Intermediate Directory.
+     1>ClCompile:
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /sdl /O2 /Oi /Oy- /GL /D WIN32 /D _WINDOWS /D NDEBUG /D _USRDLL /D _WINDLL /D _UNICODE /D UNICODE /D _AFXDLL /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Yc"stdafx.h" /Fp"F:\Practise\AutomationProjectRepo\AutomationProject\\obj\ReleaseDB\DB.pch" /Fo"F:\Practise\AutomationProjectRepo\AutomationProject\\obj\ReleaseDB\\" /Fd"F:\Practise\AutomationProjectRepo\AutomationProject\\obj\ReleaseDB\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt stdafx.cpp
+         stdafx.cpp
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /sdl /O2 /Oi /Oy- /GL /D WIN32 /D _WINDOWS /D NDEBUG /D _USRDLL /D _WINDLL /D _UNICODE /D UNICODE /D _AFXDLL /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Yu"stdafx.h" /Fp"F:\Practise\AutomationProjectRepo\AutomationProject\\obj\ReleaseDB\DB.pch" /Fo"F:\Practise\AutomationProjectRepo\AutomationProject\\obj\ReleaseDB\\" /Fd"F:\Practise\AutomationProjectRepo\AutomationProject\\obj\ReleaseDB\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt Access\AccessData.cpp Access\AdoCommand.cpp Access\AdoConnect.cpp Access\AdoRecordSet.cpp DB.cpp
+         AccessData.cpp
+         AdoCommand.cpp
+         AdoConnect.cpp
+         AdoRecordSet.cpp
+     1>Access\AdoRecordSet.cpp(279): warning C4101: “e”: 未引用的局部变量
+     1>Access\AdoRecordSet.cpp(331): warning C4101: “e”: 未引用的局部变量
+     1>Access\AdoRecordSet.cpp(913): warning C4101: “e”: 未引用的局部变量
+     1>Access\AdoRecordSet.cpp(930): warning C4101: “e”: 未引用的局部变量
+     1>Access\AdoRecordSet.cpp(946): warning C4101: “e”: 未引用的局部变量
+     1>Access\AdoRecordSet.cpp(973): warning C4101: “e”: 未引用的局部变量
+     1>Access\AdoRecordSet.cpp(988): warning C4101: “e”: 未引用的局部变量
+     1>Access\AdoRecordSet.cpp(1030): warning C4101: “e”: 未引用的局部变量
+     1>Access\AdoRecordSet.cpp(1045): warning C4101: “e”: 未引用的局部变量
+     1>Access\AdoRecordSet.cpp(2235): warning C4101: “e”: 未引用的局部变量
+     1>Access\AdoRecordSet.cpp(2474): warning C4101: “e”: 未引用的局部变量
+         DB.cpp
+       ResourceCompile:
+         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\rc.exe /D NDEBUG /D _UNICODE /D UNICODE /D _AFXDLL /l"0x0804" /IF:\Practise\AutomationProjectRepo\AutomationProject\\obj\ReleaseDB\ /nologo /fo"F:\Practise\AutomationProjectRepo\AutomationProject\\obj\ReleaseDB\DB.res" DB.rc 
+       Link:
+         F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"F:\Practise\AutomationProjectRepo\AutomationProject\Release\DB.dll" /INCREMENTAL:NO /NOLOGO /DEF:".\DB.def" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /manifestinput:"F:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\Include\Manifest\dpiaware.manifest" /Debug /PDB:"F:\Practise\AutomationProjectRepo\AutomationProject\Release\\pdbRelease\DB.pdb" /SUBSYSTEM:WINDOWS /OPT:REF /OPT:ICF /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:\Practise\AutomationProjectRepo\AutomationProject\\lib\Release\DB.lib" /MACHINE:X86 /SAFESEH /DLL F:\Practise\AutomationProjectRepo\AutomationProject\\obj\ReleaseDB\DB.res
+         F:\Practise\AutomationProjectRepo\AutomationProject\\obj\ReleaseDB\AccessData.obj
+         F:\Practise\AutomationProjectRepo\AutomationProject\\obj\ReleaseDB\AdoCommand.obj
+         F:\Practise\AutomationProjectRepo\AutomationProject\\obj\ReleaseDB\AdoConnect.obj
+         F:\Practise\AutomationProjectRepo\AutomationProject\\obj\ReleaseDB\AdoRecordSet.obj
+         F:\Practise\AutomationProjectRepo\AutomationProject\\obj\ReleaseDB\DB.obj
+         F:\Practise\AutomationProjectRepo\AutomationProject\\obj\ReleaseDB\stdafx.obj
+         AccessData.obj : 找到 MSIL .netmodule 或使用 /GL 编译的模块；正在使用 /LTCG 重新启动链接；将 /LTCG 添加到链接命令行以改进链接器性能
+           正在创建库 F:\Practise\AutomationProjectRepo\AutomationProject\\lib\Release\DB.lib 和对象 F:\Practise\AutomationProjectRepo\AutomationProject\\lib\Release\DB.exp
+         正在生成代码
+         已完成代码的生成
+         DB.vcxproj -> F:\Practise\AutomationProjectRepo\AutomationProject\Release\DB.dll
+     1>已完成生成项目“F:\Practise\AutomationProjectRepo\AutomationProject\DB\DB.vcxproj”(Rebuild 个目标)的操作。
+
+已成功生成。
+
+已用时间 00:00:04.15
