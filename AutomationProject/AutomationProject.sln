@@ -10,6 +10,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AutomationProject", "Automa
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Motion", "Motion\Motion\Motion.vcxproj", "{6008D06D-0645-4128-9EF3-FB4374D1EDA5}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DB", "DB\DB.vcxproj", "{935ADFCD-5694-444C-B3B7-CF5D723D9741}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -34,6 +36,14 @@ Global
 		{6008D06D-0645-4128-9EF3-FB4374D1EDA5}.Release|x64.Build.0 = Release|x64
 		{6008D06D-0645-4128-9EF3-FB4374D1EDA5}.Release|x86.ActiveCfg = Release|Win32
 		{6008D06D-0645-4128-9EF3-FB4374D1EDA5}.Release|x86.Build.0 = Release|Win32
+		{935ADFCD-5694-444C-B3B7-CF5D723D9741}.Debug|x64.ActiveCfg = Debug|x64
+		{935ADFCD-5694-444C-B3B7-CF5D723D9741}.Debug|x64.Build.0 = Debug|x64
+		{935ADFCD-5694-444C-B3B7-CF5D723D9741}.Debug|x86.ActiveCfg = Debug|Win32
+		{935ADFCD-5694-444C-B3B7-CF5D723D9741}.Debug|x86.Build.0 = Debug|Win32
+		{935ADFCD-5694-444C-B3B7-CF5D723D9741}.Release|x64.ActiveCfg = Release|x64
+		{935ADFCD-5694-444C-B3B7-CF5D723D9741}.Release|x64.Build.0 = Release|x64
+		{935ADFCD-5694-444C-B3B7-CF5D723D9741}.Release|x86.ActiveCfg = Release|Win32
+		{935ADFCD-5694-444C-B3B7-CF5D723D9741}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

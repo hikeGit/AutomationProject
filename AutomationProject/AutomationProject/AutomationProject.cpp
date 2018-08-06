@@ -3,9 +3,12 @@
 
 #include "stdafx.h"
 #include <iostream>
-#include "DB\Access\AccessData.h"
+//#include "DB\Access\AccessData.h"
 #include <memory>
+#include <afx.h>
 using namespace std;
+
+#define _DEBUG
 
 unique_ptr<char[]> CStringToCharIndicator(CString strtemp)
 {	
@@ -31,6 +34,13 @@ CString GetExeDirectory()
 	return strPath;
 }
 
+#ifdef _DEBUG
+#pragma comment(lib,"..\\lib\\Debug\\DB.lib") 
+#else
+#pragma comment(lib,"..\\lib\\Release\\DB.lib") 
+#endif
+
+#include "..\include\DB\AccessData.h"
 int main()
 {
 	int * p = new int[5];
@@ -44,12 +54,6 @@ int main()
 	strTempFormName.Format(_T("%dÎ»ÖÃ²ÎÊý"), 0);
 
 	accessData.ReadFormData_ACSDData(strPath, strTempFormName, vecData);
-
-	{
-		unique_ptr<char[]> pt1 = CStringToCharIndicator("22222");
-		char *pt = pt1.get();
-		cout << pt << endl;
-	}
 
 	for (auto value : vecData)
 	{
