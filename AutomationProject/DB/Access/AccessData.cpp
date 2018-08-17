@@ -8,6 +8,9 @@
 //标识OLE初始化状态，以防重复初始化
 bool CDataAccess::ms_bInitState = false;
 bool CDataAccess::ms_bAccessConnected = false;
+ _ConnectionPtr CDataAccess::m_pConnection;
+ _RecordsetPtr   CDataAccess::m_pRecordset;
+ _CommandPtr   CDataAccess::m_pCommand;
 
 CDataAccess::CDataAccess()
 {
@@ -177,9 +180,9 @@ bool CDataAccess::Connect2DataBase(CString Path)
 			ms_bAccessConnected=true;
 			m_pConnection.CreateInstance(__uuidof(Connection));
 		    m_pConnection->Open((_bstr_t)l_NameTemp,_T(""),_T(""),adModeUnknown);
-		}
-		
+		}		
 	}
+
 	catch(_com_error e)
 	{
 		/*CString Msg=(_T("数据库连接失败，确认数据库")+Path+_T("是否存在"));
@@ -234,7 +237,7 @@ bool CDataAccess::OpenForm(CString strSQL)
 	}
 	catch(_com_error e)
 	{
-	  //  AfxMessageBox(e.ErrorMessage());
+	  AfxMessageBox(e.ErrorMessage());
 		
 		return FALSE;
 	}
@@ -374,28 +377,9 @@ int  CDataAccess::GetRowCount()
 	return l_nCount;
 }
 
-
-
 //创建一个数据表
 bool CDataAccess::CreatMehineForm(CString strPath,CString strFormName)
 {
-	return true;
-}
-//修改数据库
-bool CDataAccess::ModifyFormData(CString strPath,CString strFormName,CString strField,CString strData,int nIndex)
-{
-	_variant_t d_Data=(LPCTSTR)strData;  //CString 转换成数据库的参数类型
-
-	DataBaseInit(strPath);    //打开数据库
-
-	CString SQL=_T("SELECT * FROM ")+strFormName;
-	if(!(OpenForm(SQL)))  //当前工作文档
-	{
-		CString Msg=_T("打开")+strFormName+_T("数据表失败！");
-		AfxMessageBox(Msg,MB_TOPMOST);
-		return false;
-	}
-	WriteDataEx((_variant_t)strField,d_Data,nIndex); //写入参数
 	return true;
 }
 
@@ -493,6 +477,67 @@ bool CDataAccess::GetFormRowSize(CString strPath,CString strFormName,unsigned lo
 	return true;
 }
 
+bool CDataAccess::ReadFormData(CString strPath, CString strFormName, std::vector<CString> & vec, std::vector<std::map<CString,CString> > &resultData)
+{
+	DataBaseInit(strPath);
+
+	CString SQL = _T("SELECT * FROM ") + strFormName;
+	if (!(OpenForm(SQL)))  //当前工作文档
+	{
+		CString Msg = _T("打开") + strFormName + _T("数据表失败！");
+		AfxMessageBox(Msg, MB_TOPMOST);
+		return false;
+	}
+	std::vector<std::map<CString,CString>> allData;
+	std::map<CString,CString>  rowData;
+	CString strCurReading = _T("NoReading");//当前正在读的字段，报警用
+	CString strTemp;
+	int i = 0;
+
+	try
+	{
+		if (m_pRecordset->GetFields()->Count <(long) vec.size())
+		{
+			throw std::exception("传入的字段数大于数据库实际字段数");
+		}
+		for (; !m_pRecordset->adoEOF; m_pRecordset->MoveNext()) //读取数据路径
+		{
+			for ( i = 0; i <(int) vec.size(); i++)
+			{
+				strCurReading = vec[i];
+				strTemp = m_pRecordset->GetCollect((const _variant_t)vec[i]);
+				rowData.insert(std::pair<CString, CString>(vec[i], strTemp));
+			}
+			allData.push_back(rowData);
+			rowData.clear();
+		}
+		resultData = allData;
+	}
+	catch (std::exception e)
+	{
+		CString erro(e.what());
+		CString Msg = _T("读取") + strFormName + _T("数据表失败！")+_T("当前字段：")+strCurReading +_T(" \n") + _T("异常为:") + erro;
+		AfxMessageBox(Msg, MB_TOPMOST);
+		return false;
+	}
+	catch (_com_error  e)
+	{
+		CString erro((LPCTSTR)e.Description());
+		CString Msg = _T("读取") + strFormName + _T("数据表失败！\n") + _T("异常为:") + erro ;
+		AfxMessageBox(Msg, MB_TOPMOST);
+		return false;
+	}
+	catch (...)
+	{
+		CString t;
+		t.Format(_T("index = %d"), i);
+		CString Msg = _T("读取") + strFormName + _T("数据表失败！\n") + _T("未知异常。") + t + _T(":") + strCurReading;
+		AfxMessageBox(Msg, MB_TOPMOST);
+		return false;
+	}
+	return true;
+}
+
 //读取数据库
 bool CDataAccess::ReadFormData(CString strPath,CString strFormName,CString strField,int nIndex,CString& strData)
 {
@@ -518,706 +563,601 @@ bool CDataAccess::ReadFormData(CString strPath,CString strFormName,CString strFi
 		temIndex=temIndex+1;
 	}
 
-	return true;
-}
-//读取用户管理信息
-bool CDataAccess::ReadFormData_UserInfo(CString strPath,CString strFormName,ACSDUserInfo1D& userInfo)
-{
-	CString strTemp;
-
-	DataBaseInit(strPath);
-
-	CString SQL=_T("SELECT * FROM ")+strFormName;
-	if(!(OpenForm(SQL)))  //当前工作文档
-	{
-		CString Msg=_T("打开")+strFormName+_T("数据表失败！");
-		AfxMessageBox(Msg,MB_TOPMOST);
-		return false;
-	}
-
-	ACSDUserInfo UserInfoTemp;
-	userInfo.clear();
-	for(;!m_pRecordset->adoEOF; m_pRecordset->MoveNext()) //读取数据路径
-	{
-		UserInfoTemp.strUserName=m_pRecordset->GetCollect(_T("UsersName"));
-		strTemp=m_pRecordset->GetCollect(_T("PWD"));
-		UserInfoTemp.strUserPwd=strTemp;
-		strTemp=m_pRecordset->GetCollect(_T("CreateTime"));
-		UserInfoTemp.strCreateTime=strTemp;
-		strTemp=m_pRecordset->GetCollect(_T("AccessRight"));
-		UserInfoTemp.nUserLevel=_tstoi(strTemp);
-
-		userInfo.push_back(UserInfoTemp);
-	}
-
-	return true;
-}
-//读取数据文件信息
-bool CDataAccess::ReadFormData_FileInfo(CString strPath,CString strFormName,ACSDFileMnger1D& fileInfo)
-{
-	DataBaseInit(strPath);
-
-	CString SQL=_T("SELECT * FROM ")+strFormName;
-	if(!(OpenForm(SQL)))  //当前工作文档
-	{
-		CString Msg=_T("打开")+strFormName+_T("数据表失败！");
-		AfxMessageBox(Msg,MB_TOPMOST);
-		return false;
-	}
-
-	ACSDFileMnger FManagementTemp;
-
-	fileInfo.clear();
-
-	for(;!m_pRecordset->adoEOF; m_pRecordset->MoveNext()) //读取数据路径
-	{
-		FManagementTemp.strParamDescription=m_pRecordset->GetCollect(_T("ParamDescription"));
-		FManagementTemp.strParamValue=m_pRecordset->GetCollect(_T("ParamValue"));
-		fileInfo.push_back(FManagementTemp);
-	}
-	
-	return true;
-}
-
-//读取普通参数
-bool CDataAccess::ReadFormData_ACSDData(CString strPath,CString strFormName,ACSDData1D& smData)
-{
-	CString strTemp;
-	TCHAR* Box;
-
-	DataBaseInit(strPath);
-
-	CString SQL=_T("SELECT * FROM ")+strFormName;
-	if(!(OpenForm(SQL)))  //当前工作文档
-	{
-		CString Msg=_T("打开")+strFormName+_T("数据表失败！");
-		AfxMessageBox(Msg,MB_TOPMOST);
-		return false;
-	}
-
-	ACSDData BaseParmTemp;
-
-	smData.clear();
-
-	for(;!m_pRecordset->adoEOF; m_pRecordset->MoveNext()) //读取数据路径
-	{
-		BaseParmTemp.strName=m_pRecordset->GetCollect(_T("ParamDescription"));
-		strTemp=m_pRecordset->GetCollect(_T("ParamValue"));
-		BaseParmTemp.dwValue=_tcstod(strTemp,&Box);
-		strTemp=m_pRecordset->GetCollect(_T("ParamMax"));
-		BaseParmTemp.dwMax=_tcstod(strTemp,&Box);
-		strTemp=m_pRecordset->GetCollect(_T("ParamMin"));
-		BaseParmTemp.dwMin=_tcstod(strTemp,&Box);
-
-		smData.push_back(BaseParmTemp);
-	}
 
 	return true;
 }
 
-//读取普通坐标参数
-bool CDataAccess::ReadFormData_ACSDPosData(CString strPath,CString strFormName,ACSDPosData1D& smData)
+//修改数据库
+bool CDataAccess::ModifyFormData(CString strPath, CString strFormName, CString strField, CString strData, int nIndex)
 {
-	CString strTemp;
-	TCHAR* Box;
+	_variant_t d_Data = (LPCTSTR)strData;  //CString 转换成数据库的参数类型
 
-	DataBaseInit(strPath);
+	DataBaseInit(strPath);    //打开数据库
 
-	CString SQL=_T("SELECT * FROM ")+strFormName;
-	if(!(OpenForm(SQL)))  //当前工作文档
+	CString SQL = _T("SELECT * FROM ") + strFormName;
+	if (!(OpenForm(SQL)))  //当前工作文档
 	{
-		CString Msg=_T("打开")+strFormName+_T("数据表失败！");
-		AfxMessageBox(Msg,MB_TOPMOST);
+		CString Msg = _T("打开") + strFormName + _T("数据表失败！");
+		AfxMessageBox(Msg, MB_TOPMOST);
 		return false;
 	}
-	smData.clear();
-	ACSDPosData BoxPositionTemp;
-	for(;!m_pRecordset->adoEOF; m_pRecordset->MoveNext()) //
-	{
-		BoxPositionTemp.strName=m_pRecordset->GetCollect(_T("名称"));;
-		strTemp=m_pRecordset->GetCollect(_T("X坐标"));
-		BoxPositionTemp.dwXValue=_tcstod(strTemp,&Box);
-		strTemp=m_pRecordset->GetCollect(_T("Y坐标"));
-		BoxPositionTemp.dwYValue=_tcstod(strTemp,&Box);
-		smData.push_back(BoxPositionTemp);
-	}
-    
+	WriteDataEx((_variant_t)strField, d_Data, nIndex); //写入参数
 	return true;
 }
 
-//读取普通双坐标参数
-bool CDataAccess::ReadFormData_ACSDCamMotorData(CString strPath,CString strFormName,ACSDCamMotorData1D& smData)
+//保存所有数据
+//需要完善的地方，一是判断传进来的字段数是否小于数据库里的字段数，二是传进来的行数是否小于数据库表的行数（前提时数据库已经存在）
+bool  CDataAccess::SaveFormDataAll(CString strPath, CString strFormName, const std::vector<std::map<CString, CString>> &formdata_in)
 {
-	CString strTemp;
-	TCHAR* Box;
 
-	DataBaseInit(strPath);
-
-	CString SQL=_T("SELECT * FROM ")+strFormName;
-	if(!(OpenForm(SQL)))  //当前工作文档
+	CString strCurReading = _T("NoReading");
+	CString strCurRow = _T("-1");
+	CString ErroMsg;
+	//直接在表上改(Modify)，后期可以写一个示教点生成器，不用打开数据库，而是根据生成器里的信息自动添加数据(add)
+	try
 	{
-		CString Msg=_T("打开")+strFormName+_T("数据表失败！");
-		AfxMessageBox(Msg,MB_TOPMOST);
-		return false;
-	}
-
-	ACSDCamMotorData BoxPositionTemp;
-	smData.clear();
-
-	for(;!m_pRecordset->adoEOF; m_pRecordset->MoveNext()) //读取数据路径
-	{
-		BoxPositionTemp.strName=m_pRecordset->GetCollect(_T("名称"));
-		strTemp=m_pRecordset->GetCollect(_T("X坐标"));
-		BoxPositionTemp.dwX=_tcstod(strTemp,&Box);
-		strTemp=m_pRecordset->GetCollect(_T("Y坐标"));
-		BoxPositionTemp.dwY=_tcstod(strTemp,&Box);
-		strTemp=m_pRecordset->GetCollect(_T("X脉冲值"));
-		BoxPositionTemp.dwXplus=_tcstod(strTemp,&Box);
-		strTemp=m_pRecordset->GetCollect(_T("Y脉冲值"));
-		BoxPositionTemp.dwYplus=_tcstod(strTemp,&Box);
-		smData.push_back(BoxPositionTemp);
-	}
-    
-	return true;
-}
-
-//读取图像参数
-bool CDataAccess::ReadFormData_ACSDImageData(CString strPath,CString strFormName,ACSDImageData1D& smData)
-{
-	CString strTemp;
-	DataBaseInit(strPath);
-
-	CString SQL=_T("SELECT * FROM ")+strFormName;
-	if(!(OpenForm(SQL)))  //当前工作文档
-	{
-		CString Msg=_T("打开")+strFormName+_T("数据表失败！");
-		AfxMessageBox(Msg,MB_TOPMOST);
-		return false;
-	}
-
-	//先释放所有图像数据
-	for (unsigned int i=0;i<smData.size();i++)
-	{
-		delete smData[i].img;
-	}
-	smData.clear();
-
-	//临时图片
-	ACSDImageData ImgTemp;
-	ImgTemp.img=NULL;
-
-	for(;!m_pRecordset->adoEOF; m_pRecordset->MoveNext()) //读取数据路径
-	{
-		strTemp=m_pRecordset->GetCollect(_T("宽"));
-		ImgTemp.width=_tstol(strTemp);
-		strTemp=m_pRecordset->GetCollect(_T("高"));
-		ImgTemp.height=_tstol(strTemp);
-
-		BYTE* m_pBMPBuffer=NULL;		//内存数据
-		long lDataSize = m_pRecordset->GetFields()->GetItem(_T("数据"))->ActualSize;
-		if(lDataSize > 0)
+		DataBaseInit(strPath);
+		CString SQL = _T("SELECT * FROM ") + strFormName;
+		if (!(OpenForm(SQL)))  //当前工作文档
 		{
-			_variant_t	varBLOB;
-			varBLOB = m_pRecordset->GetFields()->GetItem(_T("数据"))->GetChunk(lDataSize);
-			if(varBLOB.vt == (VT_ARRAY | VT_UI1))
-			{
-				///重新分配必要的存储空间
-				if(m_pBMPBuffer = new BYTE[lDataSize+1]) 
-				{	
-					char *pBuf = NULL;
-					SafeArrayAccessData(varBLOB.parray,(void **)&pBuf);
+			ErroMsg = _T("打开") + strFormName + _T("数据表失败！");
+			throw std::exception((LPCSTR)(LPSTR)ErroMsg.GetBuffer());
+		}
 
-					///复制数据到缓冲区m_pBMPBuffer
-					memcpy(m_pBMPBuffer,pBuf,lDataSize);			
-					SafeArrayUnaccessData (varBLOB.parray);
-					ImgTemp.img=m_pBMPBuffer;
-				}
+		int num = formdata_in[0].size();//传递进来的map数量，即字段信息。
+		std::map<CString, CString> inmap = formdata_in[0];//获取传递进来的map字段信
+		//判断异常信息
+		if (m_pRecordset->GetFields()->Count < num)
+		{
+			throw std::exception(("传入的字段数大于数据表实际字段数"));
+		}
+		unsigned long tempcount = 0;
+		GetFormRowSize(strPath, strFormName, tempcount);
+		if (tempcount< formdata_in.size())
+		{
+			throw std::exception("需要保存的数据总数大于数据表中存在的数据总数");
+		}
+
+		//更改数据库
+		int mapindex = 0;
+		for (; !m_pRecordset->adoEOF; m_pRecordset->MoveNext()) //一行数据
+		{
+			for (auto item : formdata_in[mapindex])//某一个字段数据更新
+			{				
+				m_pRecordset->PutCollect((variant_t)item.first, (variant_t)item.second);
+				strCurReading = item.first;
 			}
+			mapindex++;
+			strCurRow.Format(_T("%d"), mapindex);
 		}
-		smData.push_back(ImgTemp);  
-	}
-
-	
-	return true;
-}
-
-//读取指定位置的报警信息-yqh.2015.6.8
-bool CDataAccess::ReadMechineErrorData(CString strPath,CString strFormName,unsigned long index,ACSDError& AlarmError)
-{
-	bool Retn=false;
-	CString strTemp;
-	DataBaseInit(strPath);
-
-	CString SQL=_T("SELECT * FROM ")+strFormName;
-	if(!(OpenForm(SQL)))  //当前工作文档
-	{
-		CString Msg=_T("打开")+strFormName+_T("数据表失败！");
-		AfxMessageBox(Msg,MB_TOPMOST);
-		return false;
-	}
-
-	int i=0;
-	while(!m_pRecordset->adoEOF)//移动到最底
-	{
-		if (index==i) //找到记录
-		{
-			Retn=true;
-			AlarmError.description=m_pRecordset->GetCollect(_T("问题描述"));
-			AlarmError.solution=m_pRecordset->GetCollect(_T("解决方案"));
-			break;
-		}
-		m_pRecordset->MoveNext();
-		i++;
-	}
-
-	if (!Retn) //报警记录
-	{
-		AlarmError.description.Format(_T("的索引号%d没有找到报警记录"),index);
-		AlarmError.description=strFormName+_T("数据表")+AlarmError.description;
-		AlarmError.solution=AlarmError.description;
-	}
-
-	
-	return true;
-}
-
-//增加用户管理信息
-bool CDataAccess::AddFormData_UserInfo(CString strPath,CString strFormName,ACSDUserInfo userInfo)
-{
-	CString strTemp;
-
-	DataBaseInit(strPath);
-
-	CString SQL=_T("SELECT * FROM ")+strFormName;
-	if(!(OpenForm(SQL)))  //当前工作文档
-	{
-		CString Msg=_T("打开")+strFormName+_T("数据表失败！");
-		AfxMessageBox(Msg,MB_TOPMOST);
-		return false;
-	}
-	int i=0;
-	while(!m_pRecordset->adoEOF)//移动到最底
-	{
-		m_pRecordset->MoveNext();
-		i++;
-	}
-	m_pRecordset->AddNew();
-
-	CString  str_userLevel;
-	str_userLevel.Format(_T("%d"), userInfo.nUserLevel);
-	WriteData(_T("UsersName"),(variant_t)userInfo.strUserName);
-	WriteData(_T("PWD"),(variant_t)userInfo.strUserPwd);
-	WriteData(_T("CreateTime"),(variant_t)userInfo.strCreateTime);
-	WriteData(_T("AccessRight"),(variant_t)str_userLevel);
-
-	
-	return true;
-}
-
-//增加数据文件信息
-bool CDataAccess::AddFormData_FileInfo(CString strPath,CString strFormName,ACSDFileMnger fileInfo)
-{
-	CString strTemp;
-
-	DataBaseInit(strPath);
-
-	CString SQL=_T("SELECT * FROM ")+strFormName;
-
-	if(!(OpenForm(SQL)))  //当前工作文档
-	{
-		CString Msg=_T("打开")+strFormName+_T("数据表失败！");
-		AfxMessageBox(Msg,MB_TOPMOST);
-		return false;
-	}
-
-	int i=0;
-	while(!m_pRecordset->adoEOF)//移动到最底
-	{
-		m_pRecordset->MoveNext();
-		i++;
-	}
-	m_pRecordset->AddNew();
-	WriteData(_T("ID"),(variant_t)i);
-	WriteData(_T("ParamDescription"),(variant_t)fileInfo.strParamDescription);
-	WriteData(_T("ParamValue"),(variant_t)fileInfo.strParamValue);
-
-	return true;
-}
-//增加普通参数
-bool CDataAccess::AddFormData_ACSDData(CString strPath,CString strFormName,ACSDData smData)
-{
-	CString strTemp;
-
-	DataBaseInit(strPath);
-
-	CString SQL=_T("SELECT * FROM ")+strFormName;
-
-	if(!(OpenForm(SQL)))  //当前工作文档
-	{
-		CString Msg=_T("打开")+strFormName+_T("数据表失败！");
-		AfxMessageBox(Msg,MB_TOPMOST);
-		return false;
-	}
-
-	int i=0;
-	while(!m_pRecordset->adoEOF)//移动到最底
-	{
-		m_pRecordset->MoveNext();
-		i++;
-	}
-	m_pRecordset->AddNew();
-	WriteData(_T("ID"),(variant_t)i);
-	WriteData(_T("ParamDescription"),(variant_t)smData.strName);
-	WriteData(_T("ParamValue"),(variant_t)smData.dwValue);
-	WriteData(_T("ParamMax"),(variant_t)smData.dwMax);
-	WriteData(_T("ParamMin"),(variant_t)smData.dwMin);
-
-	return true;
-}
-
-//增加普通坐标参数
-bool CDataAccess::AddFormData_ACSDPosData(CString strPath,CString strFormName,ACSDPosData smData)
-{
-	CString strTemp;
-
-	DataBaseInit(strPath);
-
-	CString SQL=_T("SELECT * FROM ")+strFormName;
-
-	if(!(OpenForm(SQL)))  //当前工作文档
-	{
-		CString Msg=_T("打开")+strFormName+_T("数据表失败！");
-		AfxMessageBox(Msg,MB_TOPMOST);
-		return false;
-	}
-
-	int i=0;
-	while(!m_pRecordset->adoEOF)//移动到最底
-	{
-		m_pRecordset->MoveNext();
-		i++;
-	}
-	m_pRecordset->AddNew();
-	WriteData(_T("ID"),(variant_t)i);
-	WriteData(_T("名称"),(variant_t)smData.strName);
-	WriteData(_T("X坐标"),(variant_t)smData.dwXValue);
-	WriteData(_T("Y坐标"),(variant_t)smData.dwYValue);
-
-	return true;
-}
-//增加普通双坐标参数-yqh.2015.03.05
-bool CDataAccess::AddFormData_ACSDCamMotorData(CString strPath,CString strFormName,ACSDCamMotorData smData)
-{
-	CString strTemp;
-
-	DataBaseInit(strPath);
-
-	CString SQL=_T("SELECT * FROM ")+strFormName;
-
-	if(!(OpenForm(SQL)))  //当前工作文档
-	{
-		CString Msg=_T("打开")+strFormName+_T("数据表失败！");
-		AfxMessageBox(Msg,MB_TOPMOST);
-		return false;
-	}
-
-	int i=0;
-	while(!m_pRecordset->adoEOF)//移动到最底
-	{
-		m_pRecordset->MoveNext();
-		i++;
-	}
-	m_pRecordset->AddNew();
-	WriteData(_T("ID"),(variant_t)i);
-	WriteData(_T("X坐标"),(variant_t)smData.dwX);
-	WriteData(_T("Y坐标"),(variant_t)smData.dwY);
-	WriteData(_T("X脉冲值"),(variant_t)smData.dwXplus);
-	WriteData(_T("Y脉冲值"),(variant_t)smData.dwYplus);
-	WriteData(_T("名称"),(variant_t)smData.strName);
-	
-	return true;
-}
-
-//增加图像参数
-bool CDataAccess::AddFormData_ACSDImageData(CString strPath,CString strFormName,ACSDImageData smData)
-{
-	return true;
-}
-
-//增加用户管理信息
-bool CDataAccess::AddFormData_UserInfo1D(CString strPath,CString strFormName,ACSDUserInfo1D userInfo)
-{
-	CString strTemp;
-
-	DataBaseInit(strPath);
-
-	CString SQL=_T("SELECT * FROM ")+strFormName;
-	if(!(OpenForm(SQL)))  //当前工作文档
-	{
-		CString Msg=_T("打开")+strFormName+_T("数据表失败！");
-		AfxMessageBox(Msg,MB_TOPMOST);
-		return false;
-	}
-	int i=0;
-	while(!m_pRecordset->adoEOF)//移动到最底
-	{
-		m_pRecordset->MoveNext();
-		i++;
-	}
-	
-	for (size_t z=0;z<userInfo.size();z++)
-	{
-		m_pRecordset->AddNew();
-		CString  str_userLevel;
-		str_userLevel.Format(_T("%d"), userInfo[z].nUserLevel);
-		WriteData(_T("UsersName"),(variant_t)userInfo[z].strUserName);
-		WriteData(_T("PWD"),(variant_t)userInfo[z].strUserPwd);
-		WriteData(_T("CreateTime"),(variant_t)userInfo[z].strCreateTime);
-		WriteData(_T("AccessRight"),(variant_t)str_userLevel);
-	}
-	
-	return true;
-}
-
-//增加数据文件信息
-bool CDataAccess::AddFormData_FileInfo1D(CString strPath,CString strFormName,ACSDFileMnger1D fileInfo)
-{
-	CString strTemp;
-
-	DataBaseInit(strPath);
-
-	CString SQL=_T("SELECT * FROM ")+strFormName;
-
-	if(!(OpenForm(SQL)))  //当前工作文档
-	{
-		CString Msg=_T("打开")+strFormName+_T("数据表失败！");
-		AfxMessageBox(Msg,MB_TOPMOST);
-		return false;
-	}
-
-	int i=0;
-	while(!m_pRecordset->adoEOF)//移动到最底
-	{
-		m_pRecordset->MoveNext();
-		i++;
-	}
-
-	for (size_t z=0;z<fileInfo.size();z++)
-	{
-		m_pRecordset->AddNew();
-		WriteData(_T("ID"),(variant_t)(i+z));
-		WriteData(_T("ParamDescription"),(variant_t)fileInfo[z].strParamDescription);
-		WriteData(_T("ParamValue"),(variant_t)fileInfo[z].strParamValue);
-	}
-	return true;
-}
-//增加普通参数
-bool CDataAccess::AddFormData_ACSDData1D(CString strPath,CString strFormName,ACSDData1D smData)
-{
-	CString strTemp;
-
-	DataBaseInit(strPath);
-
-	CString SQL=_T("SELECT * FROM ")+strFormName;
-
-	if(!(OpenForm(SQL)))  //当前工作文档
-	{
-		CString Msg=_T("打开")+strFormName+_T("数据表失败！");
-		AfxMessageBox(Msg,MB_TOPMOST);
-		return false;
-	}
-
-	int i=0;
-	while(!m_pRecordset->adoEOF)//移动到最底
-	{
-		m_pRecordset->MoveNext();
-		i++;
-	}
-	for (size_t z=0;z<smData.size();z++)
-	{
-		m_pRecordset->AddNew();
-		WriteData(_T("ID"),(variant_t)(i+z));
-		WriteData(_T("ParamDescription"),(variant_t)smData[z].strName);
-		WriteData(_T("ParamValue"),(variant_t)smData[z].dwValue);
-		WriteData(_T("ParamMax"),(variant_t)smData[z].dwMax);
-		WriteData(_T("ParamMin"),(variant_t)smData[z].dwMin);
-	}
-	
-
-	return true;
-}
-
-//增加普通坐标参数
-bool CDataAccess::AddFormData_ACSDPosData1D(CString strPath,CString strFormName,ACSDPosData1D smData)
-{
-	CString strTemp;
-
-	DataBaseInit(strPath);
-
-	CString SQL=_T("SELECT * FROM ")+strFormName;
-
-	if(!(OpenForm(SQL)))  //当前工作文档
-	{
-		CString Msg=_T("打开")+strFormName+_T("数据表失败！");
-		AfxMessageBox(Msg,MB_TOPMOST);
-		return false;
-	}
-
-	int i=0;
-	while(!m_pRecordset->adoEOF)//移动到最底
-	{
-		m_pRecordset->MoveNext();
-		i++;
-	}
-	for (size_t z=0;z<smData.size();z++)
-	{
-		m_pRecordset->AddNew();
-		WriteData(_T("ID"),(variant_t)(i+z));
-		WriteData(_T("名称"),(variant_t)smData[z].strName);
-		WriteData(_T("X坐标"),(variant_t)smData[z].dwXValue);
-		WriteData(_T("Y坐标"),(variant_t)smData[z].dwYValue);
-	}
-
-
-	return true;
-}
-//增加普通双坐标参数-yqh.2015.03.05
-bool CDataAccess::AddFormData_ACSDCamMotorData1D(CString strPath,CString strFormName,ACSDCamMotorData1D smData)
-{
-	CString strTemp;
-
-	DataBaseInit(strPath);
-
-	CString SQL=_T("SELECT * FROM ")+strFormName;
-
-	if(!(OpenForm(SQL)))  //当前工作文档
-	{
-		CString Msg=_T("打开")+strFormName+_T("数据表失败！");
-		AfxMessageBox(Msg,MB_TOPMOST);
-		return false;
-	}
-
-	int i=0;
-	while(!m_pRecordset->adoEOF)//移动到最底
-	{
-		m_pRecordset->MoveNext();
-		i++;
-	}
-	for (size_t z=0;z<smData.size();z++)
-	{
-		m_pRecordset->AddNew();
-		WriteData(_T("ID"),(variant_t)(i+z));
-		WriteData(_T("X坐标"),(variant_t)smData[z].dwX);
-		WriteData(_T("Y坐标"),(variant_t)smData[z].dwY);
-		WriteData(_T("X脉冲值"),(variant_t)smData[z].dwXplus);
-		WriteData(_T("Y脉冲值"),(variant_t)smData[z].dwYplus);
-		WriteData(_T("名称"),(variant_t)smData[z].strName);
-	}
-	
-
-	return true;
-}
-
-//增加图像参数
-bool CDataAccess::AddFormData_ACSDImageData1D(CString strPath,CString strFormName,ACSDImageData1D smData)
-{
-	return true;
-}
-
-//存图片数据
-bool CDataAccess::ModifyFormData_ACSDImageData(CString strPath,CString strFormName,ACSDImageData smData,unsigned long nIndex)
-{
-#define  IMG_DEPTH 8
-#define  IMG_CHANNAL 1
-
-	DataBaseInit(strPath);
-	CString bStr;
-	//-------------------------------------
-	CString SQL=_T("SELECT * FROM ")+strFormName;
-	if(!(OpenForm(SQL)))  //当前工作文档
-	{
-		CString Msg=_T("打开")+strFormName+_T("数据表失败！");
-		AfxMessageBox(Msg,MB_TOPMOST);
-		return false;
-	}
-
-	CString bField=_T("宽");
-	bStr.Format(_T("%d"),smData.width);
-	_variant_t d_Data=(LPCTSTR)bStr; 
-	WriteDataEx((_variant_t)bField,d_Data,nIndex); //写入参数宽
-
-	bField=_T("高");
-	bStr.Format(_T("%d"),smData.height);
-	d_Data=(LPCTSTR)bStr; 
-	WriteDataEx((_variant_t)bField,d_Data,nIndex); //写入参数高
-
-	BYTE			*pBuf = smData.img;        //写入图像数据
-	VARIANT			varBLOB;
-	SAFEARRAY		*psa;
-	SAFEARRAYBOUND	rgsabound[1];
-
-	unsigned long widthstep=(smData.width*IMG_DEPTH/8+3)/4*4; //字节对齐
-	unsigned long lDataSize=widthstep*smData.height; //不能用img->width*img->height
-	if(pBuf)
-	{   
-		rgsabound[0].lLbound = 0;
-		rgsabound[0].cElements = lDataSize;
-		psa = SafeArrayCreate(VT_UI1, 1, rgsabound);
-		for (long i = 0; i < (long)lDataSize; i++)
-		{
-			SafeArrayPutElement (psa, &i, pBuf++);
-		}
-		varBLOB.vt = VT_ARRAY | VT_UI1;
-		varBLOB.parray = psa;
-
-		m_pRecordset->MoveFirst();  //移动到指定的行
-		for(unsigned int i = 0; i <nIndex;i++)
-		{
-			m_pRecordset->MoveNext();
-		}
-		m_pRecordset->GetFields()->GetItem(_T("数据"))->AppendChunk(varBLOB);
 		m_pRecordset->Update();
 	}
 
-	
-	return true;
-}
-
-//增加IO参数
-bool CDataAccess::AddFormData_ACSDIOData1D(CString strPath,CString strFormName,ACSDIOData1D ioData1D)
-{
-	CString strTemp;
-
-	DataBaseInit(strPath);
-
-	CString SQL=_T("SELECT * FROM ")+strFormName;
-
-	if(!(OpenForm(SQL)))  //当前工作文档
+	catch (_com_error  e)
 	{
-		CString Msg=_T("打开")+strFormName+_T("数据表失败！");
-		AfxMessageBox(Msg,MB_TOPMOST);
+		CString erro((LPCTSTR)e.Description());
+		CString Msg = _T("保存") + strFormName + _T("数据表失败！\n") + _T("当前行数：") + strCurRow + _T("  当前字段：") + strCurReading + _T("\n异常为:") + erro;
+		AfxMessageBox(Msg, MB_TOPMOST);
 		return false;
 	}
-
-	int i=0;
-	while(!m_pRecordset->adoEOF)//移动到最底
+	catch (std::exception e)
 	{
-		m_pRecordset->MoveNext();
-		i++;
+		CString erro(e.what());
+		CString Msg = _T("保存") + strFormName + _T("数据表失败！") + _T("当前行数：") + strCurRow + _T("  当前字段：") + strCurReading + _T(" \n") + _T("\n异常为:") + erro;
+		AfxMessageBox(Msg, MB_TOPMOST);
+		return false;
 	}
-	for (size_t z=0;z<ioData1D.size();z++)
+	catch (...)
 	{
-		m_pRecordset->AddNew();
-		WriteData(_T("ID"),(variant_t)(i+z));
-		WriteData(_T("Discribe"),(variant_t)ioData1D[z].discribe);
-		WriteData(_T("SysXIndex"),(variant_t)ioData1D[z].sysIndex);
-		WriteData(_T("SysXBit"),(variant_t)ioData1D[z].sysBit);
-		WriteData(_T("DeviceID"),(variant_t)ioData1D[z].deviceID);
-		WriteData(_T("DevXIndex"),(variant_t)ioData1D[z].devIndex);
-		WriteData(_T("DevXBit"),(variant_t)ioData1D[z].devBit);
-		WriteData(_T("DeviceType"),(variant_t)ioData1D[z].deviceType);
-		WriteData(_T("DevXType"),(variant_t)ioData1D[z].devType);
+		CString Msg = _T("读取") + strFormName + _T("数据表失败！\n") + _T("未知异常。") + _T("当前行数：") + strCurRow + _T("  当前字段：") + strCurReading;
+		AfxMessageBox(Msg, MB_TOPMOST);
+		return false;
+	}
+	return true;
+
+}
+//保存特定行数据
+bool CDataAccess::SaveFormData(CString strPath, CString strFormName, const std::map<CString,CString> &savekeys, const std::map<CString, CString> & savedata)
+{
+	CString strCurReading = _T("NoReading");
+	CString strCurRow = _T("-1");
+	CString ErroMsg;
+	//直接在表上改(Modify)，后期可以写一个示教点生成器，不用打开数据库，而是根据生成器里的信息自动添加数据(add)
+	try
+	{
+		DataBaseInit(strPath);
+		CString SQL = _T("SELECT * FROM ") + strFormName;
+		if (!(OpenForm(SQL)))  //当前工作文档
+		{
+			ErroMsg = _T("打开") + strFormName + _T("数据表失败！");
+			throw std::exception((LPCSTR)(LPSTR)ErroMsg.GetBuffer());
+		}
+
+		//更改数据库
+		int mapindex = 0;
+		for (; !m_pRecordset->adoEOF; m_pRecordset->MoveNext()) //一行数据
+		{
+			bool bAllKeysOk = true;
+			for (auto item : savekeys)
+			{
+				if (m_pRecordset->GetCollect((variant_t)item.first) != item.second)
+				{
+					bAllKeysOk = false;
+					mapindex++;
+					strCurRow.Format(_T("%d"), mapindex);
+					strCurReading = item.first;
+					continue;
+				}
+			}
+
+			if (!bAllKeysOk)
+			{
+				throw std::exception("保存时需要查找·比对关键字失败");				
+			}			
+		}
+
+		for (auto item : savedata)
+		{
+			m_pRecordset->PutCollect((variant_t)item.first, (variant_t)item.second);
+		}
+
+		m_pRecordset->Update();
 	}
 
+	catch (_com_error  e)
+	{
+		CString erro((LPCTSTR)e.Description());
+		CString Msg = _T("保存") + strFormName + _T("数据表失败！\n") + _T("当前行数：") + strCurRow + _T("  当前字段：") + strCurReading + _T("\n异常为:") + erro;
+		AfxMessageBox(Msg, MB_TOPMOST);
+		return false;
+	}
+	catch (std::exception e)
+	{
+		CString erro(e.what());
+		CString Msg = _T("保存") + strFormName + _T("数据表失败！") + _T("当前行数：") + strCurRow + _T("  当前字段：") + strCurReading + _T(" \n") + _T("\n异常为:") + erro;
+		AfxMessageBox(Msg, MB_TOPMOST);
+		return false;
+	}
+	catch (...)
+	{
+		CString Msg = _T("读取") + strFormName + _T("数据表失败！\n") + _T("未知异常。") + _T("当前行数：") + strCurRow + _T("  当前字段：") + strCurReading;
+		AfxMessageBox(Msg, MB_TOPMOST);
+		return false;
+	}
 	return true;
 }
+
+bool  CDataAccess::ModifyFormDataAll(CString strPath, CString strFormName, const std::vector<std::map<CString, CString>> &formdata)
+{
+
+     return	SaveFormDataAll(strPath, strFormName, formdata);
+}
+bool CDataAccess::ModifyFormData(CString strPath, CString strFormName, const std::map<CString,CString> &savekeys, const std::map<CString, CString> & savedata)
+{
+	return  SaveFormData(strPath, strFormName, savekeys, savedata);
+}
+
+
+#pragma region 删除
+//增加用户管理信息
+//bool CDataAccess::AddFormData_UserInfo(CString strPath,CString strFormName,ACSDUserInfo userInfo)
+//{
+//	CString strTemp;
+//
+//	DataBaseInit(strPath);
+//
+//	CString SQL=_T("SELECT * FROM ")+strFormName;
+//	if(!(OpenForm(SQL)))  //当前工作文档
+//	{
+//		CString Msg=_T("打开")+strFormName+_T("数据表失败！");
+//		AfxMessageBox(Msg,MB_TOPMOST);
+//		return false;
+//	}
+//	int i=0;
+//	while(!m_pRecordset->adoEOF)//移动到最底
+//	{
+//		m_pRecordset->MoveNext();
+//		i++;
+//	}
+//	m_pRecordset->AddNew();
+//
+//	CString  str_userLevel;
+//	str_userLevel.Format(_T("%d"), userInfo.nUserLevel);
+//	WriteData(_T("UsersName"),(variant_t)userInfo.strUserName);
+//	WriteData(_T("PWD"),(variant_t)userInfo.strUserPwd);
+//	WriteData(_T("CreateTime"),(variant_t)userInfo.strCreateTime);
+//	WriteData(_T("AccessRight"),(variant_t)str_userLevel);
+//
+//	
+//	return true;
+//}
+//增加数据文件信息
+//bool CDataAccess::AddFormData_FileInfo(CString strPath,CString strFormName,ACSDFileMnger fileInfo)
+//{
+//	CString strTemp;
+//
+//	DataBaseInit(strPath);
+//
+//	CString SQL=_T("SELECT * FROM ")+strFormName;
+//
+//	if(!(OpenForm(SQL)))  //当前工作文档
+//	{
+//		CString Msg=_T("打开")+strFormName+_T("数据表失败！");
+//		AfxMessageBox(Msg,MB_TOPMOST);
+//		return false;
+//	}
+//
+//	int i=0;
+//	while(!m_pRecordset->adoEOF)//移动到最底
+//	{
+//		m_pRecordset->MoveNext();
+//		i++;
+//	}
+//	m_pRecordset->AddNew();
+//	WriteData(_T("ID"),(variant_t)i);
+//	WriteData(_T("ParamDescription"),(variant_t)fileInfo.strParamDescription);
+//	WriteData(_T("ParamValue"),(variant_t)fileInfo.strParamValue);
+//
+//	return true;
+//}
+//增加普通参数
+//bool CDataAccess::AddFormData_ACSDData(CString strPath,CString strFormName,ACSDData smData)
+//{
+//	CString strTemp;
+//
+//	DataBaseInit(strPath);
+//
+//	CString SQL=_T("SELECT * FROM ")+strFormName;
+//
+//	if(!(OpenForm(SQL)))  //当前工作文档
+//	{
+//		CString Msg=_T("打开")+strFormName+_T("数据表失败！");
+//		AfxMessageBox(Msg,MB_TOPMOST);
+//		return false;
+//	}
+//
+//	int i=0;
+//	while(!m_pRecordset->adoEOF)//移动到最底
+//	{
+//		m_pRecordset->MoveNext();
+//		i++;
+//	}
+//	m_pRecordset->AddNew();
+//	WriteData(_T("ID"),(variant_t)i);
+//	WriteData(_T("ParamDescription"),(variant_t)smData.strName);
+//	WriteData(_T("ParamValue"),(variant_t)smData.dwValue);
+//	WriteData(_T("ParamMax"),(variant_t)smData.dwMax);
+//	WriteData(_T("ParamMin"),(variant_t)smData.dwMin);
+//
+//	return true;
+//}
+//增加普通坐标参数
+//bool CDataAccess::AddFormData_ACSDPosData(CString strPath,CString strFormName,ACSDPosData smData)
+//{
+//	CString strTemp;
+//
+//	DataBaseInit(strPath);
+//
+//	CString SQL=_T("SELECT * FROM ")+strFormName;
+//
+//	if(!(OpenForm(SQL)))  //当前工作文档
+//	{
+//		CString Msg=_T("打开")+strFormName+_T("数据表失败！");
+//		AfxMessageBox(Msg,MB_TOPMOST);
+//		return false;
+//	}
+//
+//	int i=0;
+//	while(!m_pRecordset->adoEOF)//移动到最底
+//	{
+//		m_pRecordset->MoveNext();
+//		i++;
+//	}
+//	m_pRecordset->AddNew();
+//	WriteData(_T("ID"),(variant_t)i);
+//	WriteData(_T("名称"),(variant_t)smData.strName);
+//	WriteData(_T("X坐标"),(variant_t)smData.dwXValue);
+//	WriteData(_T("Y坐标"),(variant_t)smData.dwYValue);
+//
+//	return true;
+//}
+//增加普通双坐标参数-yqh.2015.03.05
+//bool CDataAccess::AddFormData_ACSDCamMotorData(CString strPath,CString strFormName,ACSDCamMotorData smData)
+//{
+//	CString strTemp;
+//
+//	DataBaseInit(strPath);
+//
+//	CString SQL=_T("SELECT * FROM ")+strFormName;
+//
+//	if(!(OpenForm(SQL)))  //当前工作文档
+//	{
+//		CString Msg=_T("打开")+strFormName+_T("数据表失败！");
+//		AfxMessageBox(Msg,MB_TOPMOST);
+//		return false;
+//	}
+//
+//	int i=0;
+//	while(!m_pRecordset->adoEOF)//移动到最底
+//	{
+//		m_pRecordset->MoveNext();
+//		i++;
+//	}
+//	m_pRecordset->AddNew();
+//	WriteData(_T("ID"),(variant_t)i);
+//	WriteData(_T("X坐标"),(variant_t)smData.dwX);
+//	WriteData(_T("Y坐标"),(variant_t)smData.dwY);
+//	WriteData(_T("X脉冲值"),(variant_t)smData.dwXplus);
+//	WriteData(_T("Y脉冲值"),(variant_t)smData.dwYplus);
+//	WriteData(_T("名称"),(variant_t)smData.strName);
+//	
+//	return true;
+//}
+//增加用户管理信息
+//bool CDataAccess::AddFormData_UserInfo1D(CString strPath,CString strFormName,ACSDUserInfo1D userInfo)
+//{
+//	CString strTemp;
+//
+//	DataBaseInit(strPath);
+//
+//	CString SQL=_T("SELECT * FROM ")+strFormName;
+//	if(!(OpenForm(SQL)))  //当前工作文档
+//	{
+//		CString Msg=_T("打开")+strFormName+_T("数据表失败！");
+//		AfxMessageBox(Msg,MB_TOPMOST);
+//		return false;
+//	}
+//	int i=0;
+//	while(!m_pRecordset->adoEOF)//移动到最底
+//	{
+//		m_pRecordset->MoveNext();
+//		i++;
+//	}
+//	
+//	for (size_t z=0;z<userInfo.size();z++)
+//	{
+//		m_pRecordset->AddNew();
+//		CString  str_userLevel;
+//		str_userLevel.Format(_T("%d"), userInfo[z].nUserLevel);
+//		WriteData(_T("UsersName"),(variant_t)userInfo[z].strUserName);
+//		WriteData(_T("PWD"),(variant_t)userInfo[z].strUserPwd);
+//		WriteData(_T("CreateTime"),(variant_t)userInfo[z].strCreateTime);
+//		WriteData(_T("AccessRight"),(variant_t)str_userLevel);
+//	}
+//	
+//	return true;
+//}
+//增加数据文件信息
+//bool CDataAccess::AddFormData_FileInfo1D(CString strPath,CString strFormName,ACSDFileMnger1D fileInfo)
+//{
+//	CString strTemp;
+//
+//	DataBaseInit(strPath);
+//
+//	CString SQL=_T("SELECT * FROM ")+strFormName;
+//
+//	if(!(OpenForm(SQL)))  //当前工作文档
+//	{
+//		CString Msg=_T("打开")+strFormName+_T("数据表失败！");
+//		AfxMessageBox(Msg,MB_TOPMOST);
+//		return false;
+//	}
+//
+//	int i=0;
+//	while(!m_pRecordset->adoEOF)//移动到最底
+//	{
+//		m_pRecordset->MoveNext();
+//		i++;
+//	}
+//
+//	for (size_t z=0;z<fileInfo.size();z++)
+//	{
+//		m_pRecordset->AddNew();
+//		WriteData(_T("ID"),(variant_t)(i+z));
+//		WriteData(_T("ParamDescription"),(variant_t)fileInfo[z].strParamDescription);
+//		WriteData(_T("ParamValue"),(variant_t)fileInfo[z].strParamValue);
+//	}
+//	return true;
+//}
+//增加普通参数
+//bool CDataAccess::AddFormData_ACSDData1D(CString strPath,CString strFormName,ACSDData1D smData)
+//{
+//	CString strTemp;
+//
+//	DataBaseInit(strPath);
+//
+//	CString SQL=_T("SELECT * FROM ")+strFormName;
+//
+//	if(!(OpenForm(SQL)))  //当前工作文档
+//	{
+//		CString Msg=_T("打开")+strFormName+_T("数据表失败！");
+//		AfxMessageBox(Msg,MB_TOPMOST);
+//		return false;
+//	}
+//
+//	int i=0;
+//	while(!m_pRecordset->adoEOF)//移动到最底
+//	{
+//		m_pRecordset->MoveNext();
+//		i++;
+//	}
+//	for (size_t z=0;z<smData.size();z++)
+//	{
+//		m_pRecordset->AddNew();
+//		WriteData(_T("ID"),(variant_t)(i+z));
+//		WriteData(_T("ParamDescription"),(variant_t)smData[z].strName);
+//		WriteData(_T("ParamValue"),(variant_t)smData[z].dwValue);
+//		WriteData(_T("ParamMax"),(variant_t)smData[z].dwMax);
+//		WriteData(_T("ParamMin"),(variant_t)smData[z].dwMin);
+//	}
+//	
+//
+//	return true;
+//}
+//增加普通坐标参数
+//bool CDataAccess::AddFormData_ACSDPosData1D(CString strPath,CString strFormName,ACSDPosData1D smData)
+//{
+//	CString strTemp;
+//
+//	DataBaseInit(strPath);
+//
+//	CString SQL=_T("SELECT * FROM ")+strFormName;
+//
+//	if(!(OpenForm(SQL)))  //当前工作文档
+//	{
+//		CString Msg=_T("打开")+strFormName+_T("数据表失败！");
+//		AfxMessageBox(Msg,MB_TOPMOST);
+//		return false;
+//	}
+//
+//	int i=0;
+//	while(!m_pRecordset->adoEOF)//移动到最底
+//	{
+//		m_pRecordset->MoveNext();
+//		i++;
+//	}
+//	for (size_t z=0;z<smData.size();z++)
+//	{
+//		m_pRecordset->AddNew();
+//		WriteData(_T("ID"),(variant_t)(i+z));
+//		WriteData(_T("名称"),(variant_t)smData[z].strName);
+//		WriteData(_T("X坐标"),(variant_t)smData[z].dwXValue);
+//		WriteData(_T("Y坐标"),(variant_t)smData[z].dwYValue);
+//	}
+//
+//
+//	return true;
+//}
+//增加普通双坐标参数-yqh.2015.03.05
+//bool CDataAccess::AddFormData_ACSDCamMotorData1D(CString strPath,CString strFormName,ACSDCamMotorData1D smData)
+//{
+//	CString strTemp;
+//
+//	DataBaseInit(strPath);
+//
+//	CString SQL=_T("SELECT * FROM ")+strFormName;
+//
+//	if(!(OpenForm(SQL)))  //当前工作文档
+//	{
+//		CString Msg=_T("打开")+strFormName+_T("数据表失败！");
+//		AfxMessageBox(Msg,MB_TOPMOST);
+//		return false;
+//	}
+//
+//	int i=0;
+//	while(!m_pRecordset->adoEOF)//移动到最底
+//	{
+//		m_pRecordset->MoveNext();
+//		i++;
+//	}
+//	for (size_t z=0;z<smData.size();z++)
+//	{
+//		m_pRecordset->AddNew();
+//		WriteData(_T("ID"),(variant_t)(i+z));
+//		WriteData(_T("X坐标"),(variant_t)smData[z].dwX);
+//		WriteData(_T("Y坐标"),(variant_t)smData[z].dwY);
+//		WriteData(_T("X脉冲值"),(variant_t)smData[z].dwXplus);
+//		WriteData(_T("Y脉冲值"),(variant_t)smData[z].dwYplus);
+//		WriteData(_T("名称"),(variant_t)smData[z].strName);
+//	}
+//	
+//
+//	return true;
+//}
+//存图片数据
+//bool CDataAccess::ModifyFormData_ACSDImageData(CString strPath,CString strFormName,ACSDImageData smData,unsigned long nIndex)
+//{
+//#define  IMG_DEPTH 8
+//#define  IMG_CHANNAL 1
+//
+//	DataBaseInit(strPath);
+//	CString bStr;
+//	//-------------------------------------
+//	CString SQL=_T("SELECT * FROM ")+strFormName;
+//	if(!(OpenForm(SQL)))  //当前工作文档
+//	{
+//		CString Msg=_T("打开")+strFormName+_T("数据表失败！");
+//		AfxMessageBox(Msg,MB_TOPMOST);
+//		return false;
+//	}
+//
+//	CString bField=_T("宽");
+//	bStr.Format(_T("%d"),smData.width);
+//	_variant_t d_Data=(LPCTSTR)bStr; 
+//	WriteDataEx((_variant_t)bField,d_Data,nIndex); //写入参数宽
+//
+//	bField=_T("高");
+//	bStr.Format(_T("%d"),smData.height);
+//	d_Data=(LPCTSTR)bStr; 
+//	WriteDataEx((_variant_t)bField,d_Data,nIndex); //写入参数高
+//
+//	BYTE			*pBuf = smData.img;        //写入图像数据
+//	VARIANT			varBLOB;
+//	SAFEARRAY		*psa;
+//	SAFEARRAYBOUND	rgsabound[1];
+//
+//	unsigned long widthstep=(smData.width*IMG_DEPTH/8+3)/4*4; //字节对齐
+//	unsigned long lDataSize=widthstep*smData.height; //不能用img->width*img->height
+//	if(pBuf)
+//	{   
+//		rgsabound[0].lLbound = 0;
+//		rgsabound[0].cElements = lDataSize;
+//		psa = SafeArrayCreate(VT_UI1, 1, rgsabound);
+//		for (long i = 0; i < (long)lDataSize; i++)
+//		{
+//			SafeArrayPutElement (psa, &i, pBuf++);
+//		}
+//		varBLOB.vt = VT_ARRAY | VT_UI1;
+//		varBLOB.parray = psa;
+//
+//		m_pRecordset->MoveFirst();  //移动到指定的行
+//		for(unsigned int i = 0; i <nIndex;i++)
+//		{
+//			m_pRecordset->MoveNext();
+//		}
+//		m_pRecordset->GetFields()->GetItem(_T("数据"))->AppendChunk(varBLOB);
+//		m_pRecordset->Update();
+//	}
+//
+//	
+//	return true;
+//}
+//增加IO参数
+//bool CDataAccess::AddFormData_ACSDIOData1D(CString strPath,CString strFormName,ACSDIOData1D ioData1D)
+//{
+//	CString strTemp;
+//
+//	DataBaseInit(strPath);
+//
+//	CString SQL=_T("SELECT * FROM ")+strFormName;
+//
+//	if(!(OpenForm(SQL)))  //当前工作文档
+//	{
+//		CString Msg=_T("打开")+strFormName+_T("数据表失败！");
+//		AfxMessageBox(Msg,MB_TOPMOST);
+//		return false;
+//	}
+//
+//	int i=0;
+//	while(!m_pRecordset->adoEOF)//移动到最底
+//	{
+//		m_pRecordset->MoveNext();
+//		i++;
+//	}
+//	for (size_t z=0;z<ioData1D.size();z++)
+//	{
+//		m_pRecordset->AddNew();
+//		WriteData(_T("ID"),(variant_t)(i+z));
+//		WriteData(_T("Discribe"),(variant_t)ioData1D[z].discribe);
+//		WriteData(_T("SysXIndex"),(variant_t)ioData1D[z].sysIndex);
+//		WriteData(_T("SysXBit"),(variant_t)ioData1D[z].sysBit);
+//		WriteData(_T("DeviceID"),(variant_t)ioData1D[z].deviceID);
+//		WriteData(_T("DevXIndex"),(variant_t)ioData1D[z].devIndex);
+//		WriteData(_T("DevXBit"),(variant_t)ioData1D[z].devBit);
+//		WriteData(_T("DeviceType"),(variant_t)ioData1D[z].deviceType);
+//		WriteData(_T("DevXType"),(variant_t)ioData1D[z].devType);
+//	}
+//
+//	return true;
+//}
+#pragma endregion

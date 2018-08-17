@@ -65,21 +65,20 @@ rename("ParameterDirectionEnum", "adoParameterDirectionEnum")
 #define _INCLUDE_MACHINEACESS_INCLUDE_DATA_BASE_H_
 
 #include "afx.h"
-#include "AdoConnect.h"
-#include "AdoCommand.h"
-#include "AdoRecordSet.h"
-#include "DataStruct.h"
-
+#include <vector>
+#include <map>
+#include <functional>
 #define USEPASSWORD		1
 #define NOTUSEPASSWORD	0
-
-#define _DATABASE_ACCESS_EXPORTS
 
 #ifdef _DATABASE_ACCESS_EXPORTS
 #define DATABASE_ACCESS_CLASS __declspec(dllexport)
 #else
 #define DATABASE_ACCESS_CLASS __declspec(dllimport)
 #endif
+
+#import "msado15.dll" named_guids rename("EOF","adoEOF"), rename("BOF","adoBOF")
+using namespace ADODB;
 
  class DATABASE_ACCESS_CLASS   CDataAccess
 {
@@ -114,78 +113,20 @@ public:
 	//获取表格的总行数
 	bool GetFormRowSize(CString strPath,CString strFormName,unsigned long &nSize);
 
+	bool ReadFormData(CString strPath, CString strFormName, std::vector<CString>&  vec, std::vector<std::map<CString,CString> >  &resultData);
+	 
 	//读取数据库
-	bool ReadFormData(CString strPath,CString strFormName,CString strField,int nIndex,CString& strData);
-
-	//读取用户管理信息
-	bool ReadFormData_UserInfo(CString strPath,CString strFormName,ACSDUserInfo1D& userInfo);
-
-	//读取数据文件信息
-	bool ReadFormData_FileInfo(CString strPath,CString strFormName,ACSDFileMnger1D& fileInfo);
-
-	//读取普通参数
-	bool ReadFormData_ACSDData(CString strPath,CString strFormName,ACSDData1D& smData);
-
-	//读取普通坐标参数
-	bool ReadFormData_ACSDPosData(CString strPath,CString strFormName,ACSDPosData1D& smData);
-
-	//读取普通双坐标参数
-	bool ReadFormData_ACSDCamMotorData(CString strPath,CString strFormName,ACSDCamMotorData1D& smData);
-
-	//读取图像参数
-	bool ReadFormData_ACSDImageData(CString strPath,CString strFormName,ACSDImageData1D& smData);
-
-	//读取指定位置的报警信息-yqh.2015.6.8
-	bool ReadMechineErrorData(CString strPath,CString strFormName,unsigned long index,ACSDError& AlarmError);
-
-	//------------------------------------------------
-	//  读取数据库的操作：按照类型增加
-	//------------------------------------------------
-public:
-	//增加用户管理信息
-	bool AddFormData_UserInfo(CString strPath,CString strFormName,ACSDUserInfo userInfo);
-
-	//增加数据文件信息
-	bool AddFormData_FileInfo(CString strPath,CString strFormName,ACSDFileMnger fileInfo);
-
-	//增加普通参数
-	bool AddFormData_ACSDData(CString strPath,CString strFormName,ACSDData smData);
-
-	//增加普通坐标参数
-	bool AddFormData_ACSDPosData(CString strPath,CString strFormName,ACSDPosData smData);
-
-	//增加普通双坐标参数
-	bool AddFormData_ACSDCamMotorData(CString strPath,CString strFormName,ACSDCamMotorData smData);
-
-	//增加图像参数
-	bool AddFormData_ACSDImageData(CString strPath,CString strFormName,ACSDImageData smData);
+	bool ReadFormData(CString strPath,CString strFormName,CString strField,int nIndex,CString & strData);
 
 public:
-	//增加用户管理信息
-	bool AddFormData_UserInfo1D(CString strPath,CString strFormName,ACSDUserInfo1D userInfo);
-
-	//增加数据文件信息
-	bool AddFormData_FileInfo1D(CString strPath,CString strFormName,ACSDFileMnger1D fileInfo);
-
-	//增加普通参数
-	bool AddFormData_ACSDData1D(CString strPath,CString strFormName,ACSDData1D smData);
-
-	//增加普通坐标参数
-	bool AddFormData_ACSDPosData1D(CString strPath,CString strFormName,ACSDPosData1D smData);
-
-	//增加普通双坐标参数
-	bool AddFormData_ACSDCamMotorData1D(CString strPath,CString strFormName,ACSDCamMotorData1D smData);
-
-	//增加图像参数
-	bool AddFormData_ACSDImageData1D(CString strPath,CString strFormName,ACSDImageData1D smData);
-
-	bool AddFormData_ACSDIOData1D(CString strPath,CString strFormName,ACSDIOData1D ioData1D);
-	//------------------------------------------------
-	//  数据库的操作
-	//------------------------------------------------
-public:
-	//存图片数据
-	bool ModifyFormData_ACSDImageData(CString strPath,CString strFormName,ACSDImageData smData,unsigned long nIndex);
+	//SaveFormData 函数的别名
+	bool ModifyFormDataAll(CString strPath, CString strFormName, const std::vector<std::map<CString, CString>> &formdata);
+	bool ModifyFormData(CString strPath, CString strFormName, const std::map<CString, CString> &savekeys, const std::map<CString, CString> & savedata);
+private:
+	//保存所有数据
+	bool  SaveFormDataAll(CString strPath, CString strFormName, const std::vector<std::map<CString, CString>> &formdata);
+	//只保存特定行的数据，savekeys 需要保存的关键字信息，用来查找并比对需要保存的行(字段 + 内容)，savedata 整行的数据（不包括savekey）
+	bool SaveFormData(CString strPath, CString strFormName, const std::map<CString, CString> &savekeys, const std::map<CString, CString> & savedata);
 
 
 	//------------------------------------------------
@@ -238,9 +179,9 @@ public:
 
 	//ADO数据库智能指针
 public:
-	_ConnectionPtr m_pConnection;
-	_RecordsetPtr  m_pRecordset;
-	_CommandPtr  m_pCommand;
+	static _ConnectionPtr m_pConnection;
+	static _RecordsetPtr  m_pRecordset;
+	static _CommandPtr  m_pCommand;
 
 protected:
 	//密码使用状态
