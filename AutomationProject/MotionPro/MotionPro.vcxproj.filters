@@ -1,0 +1,126 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="接口">
+      <UniqueIdentifier>{6f90f71e-cf6d-488c-b2dc-7ab3c5323380}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NoUse">
+      <UniqueIdentifier>{8eadb218-ef05-4027-b2bf-6a8a3952bb4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NoUse\资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="NoUse\源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="NoUse\头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="实现">
+      <UniqueIdentifier>{8cdc8b46-36bb-4004-9474-793b56de1a6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="实现\源文件">
+      <UniqueIdentifier>{ea17d467-7a2a-40a8-93b0-a414e170bb7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="实现\头文件">
+      <UniqueIdentifier>{f0e62254-80db-4c16-b35b-69df3cc7ce6a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="MotionPro.cpp">
+      <Filter>NoUse\源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>NoUse\源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MotionFactory.cpp">
+      <Filter>实现\源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="LS5000.cpp">
+      <Filter>实现\源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Line.cpp">
+      <Filter>实现\源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Axis.cpp">
+      <Filter>实现\源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Machine.cpp">
+      <Filter>实现\源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Common.cpp">
+      <Filter>实现\源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="MotionPro.h">
+      <Filter>NoUse\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>NoUse\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>NoUse\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>NoUse\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\MotionPro\IAxis.h">
+      <Filter>接口</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\MotionPro\IIOCard.h">
+      <Filter>接口</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\MotionPro\ILine.h">
+      <Filter>接口</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\MotionPro\IMotionCard.h">
+      <Filter>接口</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\MotionPro\MotionFactory.h">
+      <Filter>实现\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\MotionPro\LS5000.h">
+      <Filter>实现\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\MotionPro\Line.h">
+      <Filter>实现\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\MotionPro\LTDMC.h">
+      <Filter>实现\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\MotionPro\Axis.h">
+      <Filter>实现\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\MotionPro\TeachData.h">
+      <Filter>接口</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\MotionPro\Machine.h">
+      <Filter>实现\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\MotionPro\Common.h">
+      <Filter>实现\头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="MotionPro.def">
+      <Filter>NoUse\源文件</Filter>
+    </None>
+    <None Include="res\MotionPro.rc2">
+      <Filter>NoUse\资源文件</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="MotionPro.rc">
+      <Filter>NoUse\资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt">
+      <Filter>NoUse</Filter>
+    </Text>
+  </ItemGroup>
+</Project>
