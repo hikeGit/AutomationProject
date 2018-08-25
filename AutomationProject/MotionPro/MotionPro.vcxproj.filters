@@ -28,6 +28,9 @@
     <Filter Include="实现\头文件">
       <UniqueIdentifier>{f0e62254-80db-4c16-b35b-69df3cc7ce6a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="托管输出">
+      <UniqueIdentifier>{28d572af-0f65-428a-8806-c8ab7bb05e44}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MotionPro.cpp">
@@ -53,6 +56,9 @@
     </ClCompile>
     <ClCompile Include="Common.cpp">
       <Filter>实现\源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\MotionPro\Machine_CS.cpp">
+      <Filter>托管输出</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -103,6 +109,9 @@
     </ClInclude>
     <ClInclude Include="..\include\MotionPro\Common.h">
       <Filter>实现\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\MotionPro\Machine_CS.h">
+      <Filter>托管输出</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

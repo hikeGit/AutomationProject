@@ -31,6 +31,8 @@
     <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <UseOfMfc>Dynamic</UseOfMfc>
+    <CLRSupport>true</CLRSupport>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -94,6 +96,8 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;_USRDLL;_MOTIONFACTORY_EXPORTS;_MACHINE_EXPORTS;_COMMON_FUNCTION_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -198,6 +202,9 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\include\MotionPro\Machine_CS.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Axis.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="Line.cpp" />
@@ -223,6 +230,7 @@
     <ClInclude Include="..\include\MotionPro\LS5000.h" />
     <ClInclude Include="..\include\MotionPro\LTDMC.h" />
     <ClInclude Include="..\include\MotionPro\Machine.h" />
+    <ClInclude Include="..\include\MotionPro\Machine_CS.h" />
     <ClInclude Include="..\include\MotionPro\MotionFactory.h" />
     <ClInclude Include="..\include\MotionPro\TeachData.h" />
     <ClInclude Include="MotionPro.h" />
